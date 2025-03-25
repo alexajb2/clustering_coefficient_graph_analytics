@@ -54,29 +54,11 @@ def remove_short_paths(graph: Graph) -> deque:
 			nodes.append(node)
 	return nodes
 
-# def get_clustering_coefficient(graph: Graph) -> float:
-# 	triangles = 0
-# 	nodes = remove_short_paths(graph)
-
-# 	for node in nodes:
-# 		for neighbor in graph.nodes_greater_neighbors[node]:
-# 			for neighbor2 in graph.nodes_greater_neighbors[neighbor]:
-# 				if neighbor2 in graph.nodes_neighbors[node]:
-# 					triangles += 1
-
-# 	two_edge_paths = 0
-# 	for neighbors in graph.nodes_neighbors.values():
-# 		num_neighbors = len(neighbors)
-# 		if num_neighbors >= 2:
-# 			two_edge_paths += num_neighbors * (num_neighbors - 1) // 2
-# 	clustering_coefficient = 3 * triangles / two_edge_paths
-# 	return clustering_coefficient
 
 def get_clustering_coefficient(graph: Graph) -> float:
-	# First, compute degeneracy ordering.
-	# We need to consider all nodes, even isolated ones.
+	# compute degeneracy ordering
 	n = graph.get_num_nodes()
-	# Initialize degrees using get_neighbors() so that even nodes not in nodes_neighbors are considered.
+	# Initialize degrees using get_neighbors() so that even nodes not in nodes_neighbors are considered
 	degrees = {u: len(graph.get_neighbors(u)) for u in range(n)}
 	max_deg = max(degrees.values(), default=0)
 	
@@ -85,15 +67,15 @@ def get_clustering_coefficient(graph: Graph) -> float:
 	for u, deg in degrees.items():
 		buckets[deg].add(u)
 	
-	ordering = []       # This will be our degeneracy ordering.
-	position = {}       # position[u] will store the ordering index of node u.
+	ordering = []       # degeneracy ordering
+	position = {}       # position[u] will store the ordering index of node u
 	
-	# We copy degrees to update as we remove vertices.
+	# copy degrees to update as we remove vertices
 	current_degrees = degrees.copy()
 	
 	# Remove nodes iteratively
 	for _ in range(n):
-		# Find the non-empty bucket with the smallest degree.
+		# Find the non-empty bucket with the smallest degree
 		for d, bucket in enumerate(buckets):
 			if bucket:
 				u = bucket.pop()
@@ -101,28 +83,28 @@ def get_clustering_coefficient(graph: Graph) -> float:
 		ordering.append(u)
 		position[u] = len(ordering) - 1
 		
-		# "Remove" u: update the degrees of its neighbors that haven't been removed.
+		# "Remove" u: update the degrees of its neighbors that haven't been removed
 		for v in graph.get_neighbors(u):
-			# Only consider v if it hasn't been removed (i.e. is in current_degrees)
+			# Only consider v if it hasn't been removed
 			if v in current_degrees:
 				d_old = current_degrees[v]
-				# Remove v from its current bucket.
+				# Remove v from its current bucket
 				buckets[d_old].discard(v)
-				# Decrease its degree count.
+				# Decrease its degree count
 				current_degrees[v] = d_old - 1
 				buckets[d_old - 1].add(v)
-		# Mark u as removed.
+		# Mark u as removed
 		current_degrees.pop(u, None)
 	
-	# Now count triangles using the degeneracy ordering.
-	# For each vertex u, let H(u) = {v in N(u) such that position[u] < position[v]}.
+	# Now count triangles using the degeneracy ordering
+	# For each vertex u, let H(u) = {v in N(u) such that position[u] < position[v]}
 	triangles = 0
 	for u in range(n):
 		# Retrieve neighbors (use set for O(1) membership tests)
 		Nu = set(graph.get_neighbors(u))
 		# Build the forward neighbors of u
 		forward = [v for v in Nu if position[u] < position.get(v, float('inf'))]
-		# Check each pair (v, w) in forward neighborhood; if v and w are connected, then u,v,w form a triangle.
+		# Check each pair (v, w) in forward neighborhood; if v and w are connected, then u,v,w form a triangle
 		for i in range(len(forward)):
 			v = forward[i]
 			Nv = set(graph.get_neighbors(v))
@@ -131,7 +113,7 @@ def get_clustering_coefficient(graph: Graph) -> float:
 				if w in Nv:
 					triangles += 1
 
-	# Compute the total number of two-edge paths.
+	# Compute the total number of two-edge paths
 	two_edge_paths = 0
 	for u in range(n):
 		deg = len(graph.get_neighbors(u))
@@ -146,7 +128,7 @@ def get_clustering_coefficient(graph: Graph) -> float:
 
 
 def get_degree_distribution(graph: Graph) -> dict[int, int]:
-	# returns a dictionary representing the degree distribution of the graph.
+	# returns a dictionary representing the degree distribution of the graph
 	# the keys are the degree, and the values is the number of nodes with that degree
 	degree_distribution = {}
 	for node in graph.nodes_neighbors:
