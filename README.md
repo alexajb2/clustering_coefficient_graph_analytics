@@ -5,7 +5,7 @@ The clustering coefficient is a measure used in network analysis to describe how
 ## Graph Algorithm Functions and Uses
 From interconnected highways to social media networks—graphs can represent many real-world systems. The issue is that observing such systems is no simple matter. In [graph_algorithms.py](graph_algorithms.py), you will find simple methods to calcualte the degree distribution, number of edges, and number of nodes. Alongside this is a sophisticated heuristic for getting the diameter of the graph. Lastly, is the O(d^2 * n) Clustering Coefficient algorithm which counts the number of triangles further explained below. Whether you are tackling traffic congestion, managing complex relations, or fitting any problem that can be represented by a graph—these graph algorithms can be used for analytics and visualization. Below is an example of such a graph.
 
-[Simple Graph Example](Graph_from_Algorithm_Tests.png)
+![Simple Graph Example](Graph_from_Algorithm_Tests.png)
 
 ## Clustering Coefficient Algorithm: Counting Triangles
 
